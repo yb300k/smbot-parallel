@@ -214,12 +214,17 @@ def push_all_room_member(roomId, message):
             TextSendMessage(text=message))
 
 def push_all_room_member_sticker(roomId, event):
-    for i in range(0,redis.llen(roomId)):
-        line_bot_api.push_message(
-            redis.lindex(roomId,i),
-            StickerSendMessage(
-                package_id=event.message.package_id,
-                sticker_id=event.message.sticker_id))
+    pack = event.message.package_id
+    if pack == 1 or pack == 2 or pack ==3:
+        for i in range(0,redis.llen(roomId)):
+            line_bot_api.push_message(
+                redis.lindex(roomId,i),
+                StickerSendMessage(
+                    package_id=event.message.package_id,
+                    sticker_id=event.message.sticker_id))
+    else:
+        push_all_room_member(roomId,'＜スタンプ＞*対応できませんでした')
+
 
 def genenate_voting_result_message(key):
     data = redis.hgetall(key)
